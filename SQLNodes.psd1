@@ -36,53 +36,53 @@
          @{
             NodeName="ProdDB01.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="d:\sqldata"
-            SQLLogsPath="e:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="ProdDB02.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="d:\sqldata"
-            SQLLogsPath="e:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="ProdDB04.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="d:\sqldata"
-            SQLLogsPath="e:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             AutoLogonAccount="lesa\lesaapp"
-	        AutoLogonPassword="lesaapp"
+	         AutoLogonPassword="lesaapp"
             RunStateInterface=$true
             Environment="P"
          },
          @{
             NodeName="StandbyDB01.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="d:\sqldata"
-            SQLLogsPath="e:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="StandbyDB02.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="c:\sqldata"
-            SQLLogsPath="c:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="StandbyDB03.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="c:\sqldata"
-            SQLLogsPath="c:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="TrainDB01.ss911.net" 
             SQLPath="c:\sql2022"
-            SQLDataPath="c:\sqldata"
-            SQLLogsPath="c:\sqllogs"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
             Environment="T"
          }
     )

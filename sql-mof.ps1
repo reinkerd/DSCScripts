@@ -1,6 +1,6 @@
 
 # Run this configuration like this: ./<this file>.ps1 
-# Example: /SQL.ps1 
+# Example: /sql-mof.ps1 
 
 Configuration SQLServers
 {

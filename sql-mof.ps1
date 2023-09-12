@@ -1,7 +1,16 @@
+<#
 
-# Run this configuration like this: ./<this file>.ps1 
-# Example: /sql-mof.ps1 
+.SYNOPSIS
+Create MOF file from DSC Configuration for SQL Servers.  Credentials may be requested.
+No deployment of configuration is made to a server.
 
+.EXAMPLE
+./sql-mof.ps1
+
+.NOTES
+Generates MOF file for all servers in the SQLNodes.psd1 file
+
+#>
 Configuration SQLServers
 {
 
@@ -32,7 +41,7 @@ Configuration SQLServers
     Node $AllNodes.NodeName
     {
 
-        SS911_Common Servers       
+        SS911_Common Servers        
         {
             Source=$Source
             Node=$Node
@@ -85,12 +94,10 @@ Configuration SQLServers
             Recurse=$true
         }
 
-
         ss911_Sybase Sybase157   
         { 
             Source=$source
         }
-
 
         SqlSetup InstallSQL
         {

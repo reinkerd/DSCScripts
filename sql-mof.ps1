@@ -1,7 +1,6 @@
-param ([string[]]$Servers)
 
-# Run this configuration like this: ./<this file>.ps1 -Servers <servernames> 
-# Example: /SQL.ps1 -Servers labsql1.ss911.net 
+# Run this configuration like this: ./<this file>.ps1 
+# Example: /SQL.ps1 
 
 Configuration SQLServers
 {
@@ -33,7 +32,7 @@ Configuration SQLServers
     Node $AllNodes.NodeName
     {
 
-        SS911_Common Servers      
+        SS911_Common Servers       
         {
             Source=$Source
             Node=$Node
@@ -138,27 +137,11 @@ Configuration SQLServers
 # Hard-coded source location for modules and other files to copy to target server
 $Source = "\\itdev46.lesa.net\temp"
 
-# Get credentials
+# Get credentials.  Credentials for David have been placed in the creds folder.  This is a convenience to avoid
+# entering credentials every time it's run
 if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml }
 if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\sa.xml }
 
 # Create MOF files
 SQLServers -Source $Source -ConfigurationData sqlnodes.psd1 -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 
-
-# Copy these module files to the source folder from which files are copied to the server 
-copy-item -path "c:\program files\windowspowershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
-
-foreach ($Server in $Servers)
-{
-    # Copy modules to target
-    copy-item -path "$source\Modules" -filter "*.*" -Destination "\\$Server\c$\Program Files\WindowsPowerShell" -force -Recurse
-    
-    #Create cim session to pass to start-dscconfiguration
-    $cim=New-CimSession -computername $Server
-
-    Start-DscConfiguration -CimSession $cim -path ".\SQLServers\" -verbose -force -wait 
-
-    if (test-path -path "$source\$Server\lockdown.sql") { Invoke-Sqlcmd -ServerInstance $Server -InputFile "$source\$Server\lockdown.sql" }
-
-}
 

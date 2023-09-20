@@ -3,6 +3,9 @@
 
 param ([string]$Server)
 
+# Gonna use some dbatools
+import-module dbatools
+
 # Hard-coded source location for modules and other files to copy to target server
 $Source = "\\itdev46.lesa.net\temp"
 
@@ -22,3 +25,6 @@ $files = get-childitem -path "$source\$Server" -filter "*.sql"
 foreach ($file in $files) {
     Invoke-Sqlcmd -ServerInstance $Server -InputFile $files.fullname
 }
+
+# Set the Server max memory according to a formula
+Set-DbaMaxMemory -SqlInstance $Server 

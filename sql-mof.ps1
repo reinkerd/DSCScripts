@@ -35,7 +35,7 @@ Configuration SQLServers
         
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC    
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC     
 
 
     Node $AllNodes.NodeName
@@ -136,7 +136,39 @@ Configuration SQLServers
             SAPwd                  = $SACredential
             DependsOn              = @("[File]SQLData","[File]SQLLogs", "[File]SQLLocalInstall","[SS911_Common]Servers")
 
-        } # End SQLSetup
+        } 
+
+        SqlConfiguration AllowUpdates
+        {
+            InstanceName    = 'MSSQLSERVER' 
+            OptionName      = 'Allow Updates'
+            OptionValue     = 1
+        }
+
+        SqlAgentOperator Operators
+        {
+            Ensure          = 'Present'
+            Name            = 'DBA'
+            InstanceName    = 'MSSQLSERVER'
+            EmailAddress    = 'david.reinker@southsound911.org;nelson.eng@southsound911.org'
+        }
+
+        SqlConfiguration EnableDatabaseMailXPs
+        {
+            InstanceName    = 'MSSQLSERVER'
+            OptionName      = 'Database Mail XPs'
+            OptionValue     = 1
+            RestartService  = $false
+        }
+
+        cChocoPackageInstaller SSMS 
+        {
+            DependsOn="[SS911_Common]Servers","[SqlSetup]InstallSQL"
+            Name="sql-server-management-studio"
+            Ensure="Present"
+        }
+
+        # End SQLSetup
 
     } # End Node
 }

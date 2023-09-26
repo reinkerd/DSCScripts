@@ -23,8 +23,9 @@ Start-DscConfiguration -CimSession $cim -path ".\SQLServers\" -verbose -force -w
 # Find all .sql files for this server and run against this server
 $files = get-childitem -path "$source\$Server" -filter "*.sql"
 foreach ($file in $files) {
-    Invoke-Sqlcmd -ServerInstance $Server -InputFile $files.fullname
+    Invoke-Sqlcmd -ServerInstance $Server -InputFile "$($file.fullname)"
 }
 
 # Set the Server max memory according to a formula
 Set-DbaMaxMemory -SqlInstance $Server 
+

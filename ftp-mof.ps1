@@ -2,7 +2,8 @@ Configuration FTPServers
 {
 
     param (
-        [string]$Source # Path of files to be copied to the destination server
+        [string]$Source, # Path of files to be copied to the destination server
+        [pscredential]$PDFFTPCred
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, xWebAdministration
@@ -11,10 +12,23 @@ Configuration FTPServers
     Node $AllNodes.NodeName
     {
 
-        SS911_Common Servers
+        SS911_Common Servers 
         {
             Source=$Source
             Node=$Node
+        }
+
+
+        User PDFFTP 
+        {
+            UserName                    = 'PDFFTP'
+            FullName                    = 'PDFFTP'
+            Description                 = 'Account used by the PDFFTP FTP site'
+            Password                    = $PDFFTPCred
+            Ensure                      = 'Present'
+            PasswordChangeRequired      = $false
+            PasswordNeverExpires        = $true
+            PasswordChangeNotAllowed    = $true
         }
 
         ###################################################################################################################
@@ -127,6 +141,8 @@ Configuration FTPServers
 # Hard-coded source location for modules and other files to copy to target server
 $source = "\\itdev46.lesa.net\temp"
 
+$PDFFTPCred = Import-Clixml -path $source\creds\pdfftp.xml
+
 # Create MOF files
-FTPServers -source $source -ConfigurationData FTPNodes.psd1  
+FTPServers -PDFFTPCred $PDFFTPCred -source $source -ConfigurationData FTPNodes.psd1  
 

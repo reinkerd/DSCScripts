@@ -102,6 +102,29 @@ Configuration AppServers
             Ensure="Present"
         }
 
+        File Pawn
+        {
+            DestinationPath="c:\Pawn"
+            Type="Directory"
+            Ensure="Present"
+            Recurse = $true
+        }
+
+        ss911_smbshare PawnShare
+        {
+            DependsOn="[File]Pawn"
+            ShareName="Pawn"
+            SharePath="C:\Pawn"
+            Ensure="Present"
+        }
+
+        ss911_fileacl PawnPrivs
+        {
+            DependsOn="[File]Pawn"
+            Path="C:\Pawn"
+            Ensure="Present"
+            ReadAccess="LESA\LESA-it-developers,LESA\LesaUtilities"
+        }
 
         ###################################################################################################################
         #                                                                                                                 

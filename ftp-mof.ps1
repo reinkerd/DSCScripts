@@ -44,6 +44,7 @@ Configuration FTPServers
         {
             Policy      = "Log_on_as_a_batch_job"
             Identity    = "LESA\LESAUtilities"
+            Ensure      = 'Present'
         }
 
 

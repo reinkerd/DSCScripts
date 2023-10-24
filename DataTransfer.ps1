@@ -4,9 +4,6 @@
 # Change directory to app folder Ex: c:\workingfoldertfs\servers\buildscripts
 # Run in powershell: ./<this file>.ps1 -Server <ServerName> - Example: ./DataTransfer.ps1 -Server datatransfer01.ss911.net 
 
-# Hard-coded source location for modules and other files to copy to target server
-
-$Source = "\\itdev46.lesa.net\temp"
 
 
 ####################################################################################
@@ -81,10 +78,9 @@ Configuration AppServers
         }
 
 
-
         ###################################################################################################################
         #
-        # Files
+        # Files, shares and permissions
         #
 
         File DistributionFolder
@@ -141,7 +137,6 @@ Configuration AppServers
         #                                                                                                                 
         # IIS Server                                                                                                      
         #                                                                                                                 
-
 
         #
         # Windows Features 
@@ -287,10 +282,13 @@ Configuration AppServers
     } # End Node
 } # End Configuration
 
+# Hard-coded source location for modules and other files to copy to target server
+$Source = "\\itdev46.lesa.net\temp"
 
 # Create MOF files
 AppServers -ConfigurationData DataTransferNodes.psd1 -Source $Source -Server $Server 
 
+# Copy modules to the source module folder
 copy-item -path "c:\program files\windowspowershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
 
 # Copy modules to target

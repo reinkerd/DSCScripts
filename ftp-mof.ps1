@@ -6,7 +6,7 @@ Configuration FTPServers
         [pscredential]$PDFFTPCred
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, xWebAdministration
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, xWebAdministration, SecurityPolicyDsc
 
 
     Node $AllNodes.NodeName
@@ -18,6 +18,10 @@ Configuration FTPServers
             Node=$Node
         }
 
+        ###################################################################################################################
+        #                                                                                                                 
+        # Local User
+        #                                                                                                                 
 
         User PDFFTP 
         {
@@ -30,6 +34,18 @@ Configuration FTPServers
             PasswordNeverExpires        = $true
             PasswordChangeNotAllowed    = $true
         }
+
+        ###################################################################################################################
+        #                                                                                                                 
+        # Local Security Policy
+        #                                                                                                                 
+
+        UserRightsAssignment LesaUtilities_LogOnAsBatch
+        {
+            Policy      = "Log_on_as_a_batch_job"
+            Identity    = "LESA\LESAUtilities"
+        }
+
 
         ###################################################################################################################
         #                                                                                                                 

@@ -92,6 +92,15 @@ Configuration AppServers
             Ensure="Present"
         }
 
+        # Temp Folder
+
+        File Temp
+        {
+            DestinationPath="c:\Temp"
+            Type="Directory"
+            Ensure="Present"
+        }
+
         # Pawn Folder
 
         File Pawn
@@ -99,7 +108,6 @@ Configuration AppServers
             DestinationPath="c:\Pawn"
             Type="Directory"
             Ensure="Present"
-            Recurse = $true
         }
 
         ss911_smbshare PawnShare
@@ -115,7 +123,7 @@ Configuration AppServers
             DependsOn="[File]Pawn"
             Path="C:\Pawn"
             Ensure="Present"
-            ReadAccess="LESA\LESA-it-developers,LESA\LesaUtilities"
+            ReadAccess="LESA\Devs,LESA\LesaUtilities"
         }
 
         ###################################################################################################################
@@ -234,7 +242,7 @@ Configuration AppServers
             DependsOn="[File]Projects"
             Path="c:\Projects"
             Ensure="Present"
-            ReadAccess="LESA\LESA-it-developers"
+            WriteAccess="LESA\Devs"
         }
 
         File JindexPath

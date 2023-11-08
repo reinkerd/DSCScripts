@@ -5,9 +5,6 @@
 # Run in powershell: ./<this file>.ps1 - Example: ./SQLTransfer.ps1  
 # 
 
-# Hard-coded source location for modules and other files to copy to target server
-$Source = "\\nas01.lesa.net\staff\IT\NETWORK\Powershell\DSCServerSource"
-$Server = "SQLTransfer01.ss911.net"
 
 $Nodes = @{
     AllNodes = @(
@@ -49,9 +46,10 @@ Configuration SQLServers
         [String]
         $Source
         
-    )
+    ) # End Param
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC 
+
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC  
 
 
     Node $AllNodes.NodeName
@@ -150,7 +148,7 @@ Configuration SQLServers
         # Sybase - Copies folder from source to local Sybase folder and installs drivers
         #
 
-        ss911_Sybase Sybase157   
+        ss911_Sybase Sybase157    
         { 
             Source=$Source
         }
@@ -215,38 +213,12 @@ Configuration SQLServers
             DependsOn="[SqlSetup]InstallSQL"
         }
 
-
-
     } #End Node
-}
+} # End Configuration
 
-function New-ODBCDSNs {
 
-    param ([cimsession]$cim)
-
-    Add-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 32-bit -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 32-bit -SetPropertyValue @("Server=localhost", "Database=JMSDataXfer") 
-
-    Add-OdbcDsn -CimSession $cim -name Netmenu -DriverName "SQL Server" -dsntype System -Platform 32-bit  -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name Netmenu -DriverName "SQL Server" -dsntype System -Platform 32-bit -SetPropertyValue @("Server=sql-warehouse.lesa.net", "Database=LESA_Case") 
-
-    Add-OdbcDsn -CimSession $cim -name judi -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 32-bit  -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name judi -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 32-bit -SetPropertyValue @("userid=lesa_prod", "clienthostname=sqltransfer01.ss911", "port=1031", "database=judi", "server=linx.co.pierce.wa.us")
-
-    Add-OdbcDsn -CimSession $cim -name linxsrv -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 32-bit  -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name linxsrv -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 32-bit -SetPropertyValue @("userid=lesa_prod", "clienthostname=sqltransfer01.ss911", "port=1031", "database=linx", "server=linx.co.pierce.wa.us")
-
-    Add-OdbcDsn -CimSession $cim -name linxsyb -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit  -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name linxsyb -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit -SetPropertyValue @("userid=lesa_prod", "clienthostname=sqltransfer01.ss911", "port=1031", "database=linx", "server=linx.co.pierce.wa.us")
-
-    Add-OdbcDsn -CimSession $cim -name linxsyb2 -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name linxsyb2 -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit -SetPropertyValue @("userid=lesa_prod", "clienthostname=sqltransfer01.ss911", "port=1031", "database=linx", "server=linx.co.pierce.wa.us")
-
-    Add-OdbcDsn -CimSession $cim -name venus -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit  -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name venus -DriverName "Adaptive Server Enterprise" -dsntype System -Platform 64-bit -SetPropertyValue @("userid=lesa_prod", "clienthostname=sqltransfer01.ss911", "port=2025", "database=linx", "server=venus.co.pierce.wa.us")
-
-}
-
+# Hard-coded source location for modules and other files to copy to target server
+$Source = "\\netops08.ss911.net\temp"
 
 # Get stored credentials
 if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml }

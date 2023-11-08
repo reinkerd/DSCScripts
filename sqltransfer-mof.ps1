@@ -74,19 +74,6 @@ Configuration SQLServers
 
         ###################################################################################################################
         #                                                                                                                 
-        # Install MS Access 2016 Runtime
-        #                                                                                                                 
-
-        cChocoPackageInstaller MSAccess
-        {
-            DependsOn="[SS911_Common]Servers"
-            Name="access2016runtime"
-            Ensure="Present"
-        }
-
-
-        ###################################################################################################################
-        #                                                                                                                 
         # File Folders                                                                                                    
         #                                                                                                                 
 

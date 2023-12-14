@@ -12,7 +12,8 @@ copy-item -path "$source\Modules" -filter "*.*" -Destination "\\$Server\c$\Progr
 #Create cim session to pass to start-dscconfiguration
 $cim=New-CimSession -computername $Server
 
-# Disable WSUS on target - one of the components of the MOF file requires WSUS to be disabled
+# Disable WSUS on target - .Net 3.5 is no longer installable directly.  You have to download it, which requires 
+# shutting off UseWUServer and then turning it back on.
 Invoke-Command -ComputerName $Server -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" -Name "UseWUServer" -Value 0
     Restart-Service "Windows Update" -ErrorAction SilentlyContinue

@@ -62,6 +62,15 @@ Configuration AppServers
             Ensure="Present"
         }
 
+        # Untested as of 11/14/2023
+        cChocoPackageInstaller DACFramework140
+        {
+            Name="sql2017-dacframework"
+            chocoParams = "Forcex86"  # 32-bit install
+            Ensure="Present"
+        }
+
+
         # FileZilla
         cChocoPackageInstaller FileZilla
         {
@@ -188,6 +197,14 @@ Configuration AppServers
             Name="MSMQ"
             Ensure="Present"
         }
+
+        windowsFeature WCFServices
+        {
+            Name="net-wcf-services45"
+            Ensure="Present"
+            IncludeAllSubFeature = $true
+        }
+
 
         # Remove the default web site
         xWebSite DefaultWebSite

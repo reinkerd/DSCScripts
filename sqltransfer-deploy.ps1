@@ -4,8 +4,8 @@ function New-ODBCDSNs {
 
     param ([cimsession]$cim)
 
-    Add-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 32-bit -ErrorAction SilentlyContinue
-    Set-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 32-bit -SetPropertyValue @("Server=localhost", "Database=JMSDataXfer") 
+    Add-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 64-bit -ErrorAction SilentlyContinue
+    Set-OdbcDsn -CimSession $cim -name BookingReport -DriverName "SQL Server" -dsntype System -Platform 64-bit -SetPropertyValue @("Server=localhost", "Database=JMSDataXfer") 
 
     Add-OdbcDsn -CimSession $cim -name Netmenu -DriverName "SQL Server" -dsntype System -Platform 32-bit  -ErrorAction SilentlyContinue
     Set-OdbcDsn -CimSession $cim -name Netmenu -DriverName "SQL Server" -dsntype System -Platform 32-bit -SetPropertyValue @("Server=sql-warehouse.lesa.net", "Database=LESA_Case") 
@@ -27,6 +27,20 @@ function New-ODBCDSNs {
 
 }
 
+function ReplaceServerName
+{
+    param ([String]$Server)
+
+    Invoke-Command -ComputerName $Server -ScriptBlock {
+        $path = "c:\lors\PutBookingRosterIntoRawRoster.vbs"
+        $ServerName = [System.Net.dns]::gethostbyname($env:computername).HostName
+        $content = get-content -path $path
+        $newcontent = $content -replace "DRIVER={SQL Server};SERVER=(\S*);", "DRIVER={SQL Server};SERVER=$ServerName;"
+        Set-Content -path $path -value $newcontent
+    }
+    
+}
+
 $source = '\\netops08.ss911.net\Temp'
 
 # Copy these module files to the source folder from which files are copied to the server 
@@ -42,6 +56,8 @@ $cim=New-CimSession -computername $Server
 Start-DscConfiguration -CimSession $cim -Path ".\SQLServers\" -Verbose -Wait -Force
 
 New-ODBCDSNs -cim $cim
+
+ReplaceServerName -Server $Server
 
 Invoke-Sqlcmd -ServerInstance $Server -InputFile "$source\$Server\lockdown.sql" 
 

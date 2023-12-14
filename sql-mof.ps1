@@ -99,7 +99,7 @@ Configuration SQLServers
             SQLSvcStartupType      = 'Automatic'
             AgtSvcAccount          = $SqlServiceCredential
             AgtSvcStartupType      = 'Automatic'
-            SQLSysAdminAccounts    = @('LESA\ReinkerD','LESA\Engn')
+            SQLSysAdminAccounts    = @('SS911\ReinkerD','SS911\Engn')
             InstallSharedDir       = 'C:\Program Files\Microsoft SQL Server'
             InstallSharedWOWDir    = 'C:\Program Files (x86)\Microsoft SQL Server'
             InstanceDir            = 'C:\Program Files\Microsoft SQL Server'
@@ -153,7 +153,7 @@ Configuration SQLServers
 
         cChocoPackageInstaller SSMS 
         {
-            DependsOn="[SS911_Common]Servers","[SqlSetup]InstallSQL"
+            DependsOn="[SqlSetup]InstallSQL"
             Name="sql-server-management-studio"
             Ensure="Present"
         }

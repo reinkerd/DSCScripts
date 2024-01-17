@@ -7,7 +7,7 @@ param ([string]$Server)
 import-module dbatools
 
 # Hard-coded source location for modules and other files to copy to target server
-$Source = "\\itdev46.lesa.net\temp"
+$Source = "\\netops08.ss911.net\temp"
 
 # Copy these module files to the source folder from which files are copied to the server 
 copy-item -path "c:\program files\windowspowershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse

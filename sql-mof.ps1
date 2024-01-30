@@ -122,7 +122,7 @@ Configuration SQLServers
             SecurityMode           = 'SQL'
             TcpEnabled             = $true
             NpEnabled              = $false
-            BrowserSvcStartupType  = 'Manual'
+            BrowserSvcStartupType  = 'Disabled'
             SAPwd                  = $SACredential
             DependsOn              = @("[File]SQLData","[File]SQLLogs", "[File]SQLLocalInstall","[SS911_Common]Servers")
 

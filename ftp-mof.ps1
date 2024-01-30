@@ -156,7 +156,7 @@ Configuration FTPServers
 }
 
 # Hard-coded source location for modules and other files to copy to target server
-$source = "\\itdev46.lesa.net\temp"
+$source = "\\netops08.ss911.net\temp"
 
 $PDFFTPCred = Import-Clixml -path $source\creds\pdfftp.xml
 

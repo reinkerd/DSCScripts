@@ -164,7 +164,7 @@ Configuration SQLServers
 }
 
 # Hard-coded source location for modules and other files to copy to target server
-$Source = "\\itdev46.lesa.net\temp"
+$Source = "\\netops08.ss911.net\temp"
 
 # Get credentials.  Credentials for David have been placed in the creds folder.  This is a convenience to avoid
 # entering credentials every time it's run

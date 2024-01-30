@@ -307,7 +307,7 @@ Configuration AppServers
 } # End Configuration
 
 # Hard-coded source location for modules and other files to copy to target server
-$Source = "\\itdev46.lesa.net\temp"
+$Source = "\\netops08.ss911.net\temp"
 
 # Create MOF files
 AppServers -ConfigurationData DataTransferNodes.psd1 -Source $Source

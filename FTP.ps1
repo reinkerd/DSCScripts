@@ -9,7 +9,7 @@ Configuration FTPServers
         [string]$Source # Path of files to be copied to the destination server
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, xWebAdministration
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, xWebAdministration 
 
 
     Node $AllNodes.NodeName

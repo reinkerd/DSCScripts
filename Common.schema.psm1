@@ -7,9 +7,9 @@ Configuration SS911_Common
         [object]$Node
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911 
 
-
+    <#
     switch ($Node.Environment)
     {
         "D" { $Env = "Development" }
@@ -17,7 +17,7 @@ Configuration SS911_Common
         "P" { $Env = "Production" }
         "T" { $Env = "Training" }
     }
-
+    #>
 
     #                                                                                                                 
     # Windows Features                                                                                                

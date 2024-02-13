@@ -11,17 +11,16 @@ import-module SQLServer
 $Source = "\\netops08.ss911.net\temp"
 
 # Copy these module files to the source folder from which files are copied to the server 
-#copy-item -path "c:\program files\windowspowershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
-copy-item -path "c:\users\reinkerd\documents\powershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
+copy-item -path "c:\program files\windowspowershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
+#copy-item -path "c:\users\reinkerd\documents\powershell\modules\ss911" -filter "*.*" -destination "$Source\Modules" -force -Recurse
 
 # The modules must be copied to the target in order for DSC to be able to use them
-#copy-item -path "$source\Modules" -filter "*.*" -Destination "\\$Server\c$\Program Files\WindowsPowerShell" -force -Recurse
+copy-item -path "$source\Modules" -filter "*.*" -Destination "\\$Server\c$\Program Files\WindowsPowerShell" -force -Recurse
 
 #Create cim session to pass to start-dscconfiguration
-#$creds = Get-Credential -message "Enter Credentials"
-#$cim=New-CimSession -computername $Server
+$cim=New-CimSession -computername $Server
 
-Start-DscConfiguration -ComputerName $Server -path ".\SQLServers\" -verbose -force -wait 
+Start-DscConfiguration -cimsession $cim -path ".\SQLServers\" -wait -force -debug  #-verbose -force -wait 
 
 # Find all .sql files for this server and run against this server
 <#

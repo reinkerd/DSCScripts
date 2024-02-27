@@ -72,7 +72,7 @@ Configuration SS911_Common
         DependsOn="[cChocoInstaller]installChoco"
         Name="octopusdeploy.tentacle"
         Ensure="Present"
-        Version="3.2.8"
+        Version="6.0.489"
         Chocoparams="--allow-empty-checksums"
     }
 

@@ -2,9 +2,8 @@
 #
 # Run this configuration like this
 # Change directory to app folder Ex: c:\workingfoldertfs\servers\buildscripts
-# Run in powershell: ./<this file>.ps1 - Example: ./SQLTransfer.ps1  
+# Run in powershell: ./<this file>.ps1 - Example: ./rmsreports-mof.ps1  
 # 
-
 
 $Nodes = @{
     AllNodes = @(
@@ -16,12 +15,13 @@ $Nodes = @{
          @{
             NodeName='RMSReports.ss911.net' 
             SQLPath="e:\Installs\sql2022"
-            SSRSPath = 'e:\installs\ssrs2019'
+            SSRSPath = 'e:\installs\ssrs2019\SQLServerReportingServices.exe'
             SQLDataPath="e:\sqldata"
             SQLLogsPath="e:\sqllogs"
          }
      )
 }
+
 
 Configuration SQLServers
 {
@@ -74,7 +74,6 @@ Configuration SQLServers
         }
 
 
-
         ###################################################################################################################
         #                                                                                                                 
         # SQL Server                                                                                                      
@@ -86,11 +85,11 @@ Configuration SQLServers
             Action                 = 'Install'
             Features               = 'SQLENGINE'
             SQLCollation           = 'SQL_Latin1_General_CP1_CI_AS'
-            SQLSvcAccount          = $SqlServiceCredential
+            #SQLSvcAccount          = $SqlServiceCredential
             SQLSvcStartupType      = 'Automatic'
-            AgtSvcAccount          = $SqlServiceCredential
+            #AgtSvcAccount          = $SqlServiceCredential
             AgtSvcStartupType      = 'Automatic'
-            SQLSysAdminAccounts    = @('SS911\ReinkerD','SS911\EngN')
+            SQLSysAdminAccounts    = @('SS911\ReinkerD')
             SQMReporting           = 'False'
             IsSvcStartupType       = 'Automatic'
             InstallSQLDataDir      = $Node.SQLDataPath
@@ -112,30 +111,12 @@ Configuration SQLServers
             NpEnabled              = $false
             BrowserSvcStartupType  = 'Manual'
             SAPwd                  = $SACredential
-            DependsOn              = @("[File]SQLData","[File]SQLLogs", "[File]SQL2022")
+            DependsOn              = @("[File]SQLData","[File]SQLLogs")
 
             #PsDscRunAsCredential = $SqlInstallCredential
 
         } # End SQLSetup
 
-
-        SqlRSSetup SSRS
-        {
-            InstanceName = 'SSRS'
-            IAcceptLicenseTerms = 'Yes'
-            SourcePath = $Node.SSRSPath
-            Action = 'Install'
-            DependsOn = '[SqlSetup]InstallSQL'
-        }
-
-
-        SqlRS SSRSConfiguration
-        {
-            InstanceName = 'MSSQLSERVER'
-            DatabaseServerName = 'localhost'
-            DatabaseInstanceName = 'MSSQLSERVER'
-            DependsOn = '[SqlRSSetup]SSRS'
-        }
 
 
         ###################################################################################################################
@@ -143,7 +124,7 @@ Configuration SQLServers
         # Install SSMS
         #                                                                                                                 
 
-        cChocoPackageInstaller SSMS
+        cChocoPackageInstaller SSMS 
         {
             Name="sql-server-management-studio"
             Ensure="Present"
@@ -159,8 +140,9 @@ Configuration SQLServers
 $Source = "\\netops08.ss911.net\temp"
 
 # Get stored credentials
-if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml }
-if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\sa.xml }
+write-host "Getting SQL Service credentials from file..." -ForegroundColor Cyan
+$SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml 
+$SACredential = Import-Clixml -path $source\creds\sa.xml 
 
 # Create MOF files
 SQLServers -Source $Source -ConfigurationData $Nodes -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 

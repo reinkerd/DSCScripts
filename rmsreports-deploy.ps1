@@ -31,3 +31,13 @@ Start-DscConfiguration -CimSession $cim -path ".\SQLServers\" -wait -force -verb
 # Set the Server max memory according to a formula
 Set-DbatoolsInsecureConnection -SessionOnly
 Set-DbaMaxMemory -SqlInstance $Server 
+
+# Hide SQL Instance
+Enable-DbaHideInstance -SqlInstance $Server
+
+# Rename SA
+Rename-DbaLogin -SqlInstance $Server -login sa -NewLogin sysadminuser
+
+# Add Nelson as a sysadmin
+New-DbaLogin -SqlInstance $Server -login 'SS911\EngN' 
+Add-DbaServerRoleMember -SqlInstance $Server -login 'SS911\EngN' -ServerRole 'sysadmin' 

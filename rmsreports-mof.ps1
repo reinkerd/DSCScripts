@@ -73,6 +73,27 @@ Configuration SQLServers
             Type="Directory"
         }
 
+        ###################################################################################################################
+        #                                                                                                                 
+        # Secure protocols                                                                                                      
+        #                                                                                                                 
+
+        ss911_tls TLS 
+        {
+            Ensure="Present"
+        }
+    
+        ###################################################################################################################
+        #                                                                                                                 
+        # Applications                                                                                                      
+        #                                                                                                                 
+
+        cChocoPackageInstaller NotePadPlusPlus
+        {
+            Name="NotePadPlusPlus"
+            Ensure="Present"
+        }
+        
 
         ###################################################################################################################
         #                                                                                                                 
@@ -118,6 +139,13 @@ Configuration SQLServers
         } # End SQLSetup
 
 
+        SqlConfiguration SqlConfiguration
+        {
+            InstanceName = 'MSSQLSERVER'
+            OptionName = 'Remote Access'
+            OptionValue = 0
+            RestartService = $true
+        }
 
         ###################################################################################################################
         #                                                                                                                 

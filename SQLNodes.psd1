@@ -31,6 +31,7 @@
             SQLPath="e:\sql2022"
             SQLDataPath="e:\sqldata"
             SQLLogsPath="e:\sqllogs"
+            LESAAppAutoLogon = $true
             Environment="Q"
          },
          @{
@@ -48,12 +49,18 @@
             Environment="P"
          },
          @{
+            NodeName="ProdDB03.ss911.net" 
+            SQLPath="c:\sql2022"
+            SQLDataPath="e:\sqldata"
+            SQLLogsPath="f:\sqllogs"
+            Environment="P"
+         },
+         @{
             NodeName="ProdDB04.ss911.net" 
             SQLPath="c:\sql2022"
             SQLDataPath="e:\sqldata"
             SQLLogsPath="f:\sqllogs"
-            AutoLogonAccount="lesa\lesaapp"
-	         AutoLogonPassword="lesaapp"
+            LESAAppAutoLogon = $true
             RunStateInterface=$true
             Environment="P"
          },

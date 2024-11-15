@@ -169,8 +169,8 @@ $Source = "\\netops08.ss911.net\temp"
 
 # Get stored credentials
 write-host "Getting SQL Service credentials from file..." -ForegroundColor Cyan
-$SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml 
-$SACredential = Import-Clixml -path $source\creds\sa.xml 
+$SQLServiceCredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sqlservice.xml 
+$SACredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sa.xml 
 
 # Create MOF files
 SQLServers -Source $Source -ConfigurationData $Nodes -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 

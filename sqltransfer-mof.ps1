@@ -208,8 +208,8 @@ Configuration SQLServers
 $Source = "\\netops08.ss911.net\temp"
 
 # Get stored credentials
-if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml }
-if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\sa.xml }
+if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sqlservice.xml }
+if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sa.xml }
 
 # Create MOF files
 SQLServers -Source $Source -ConfigurationData $Nodes -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 

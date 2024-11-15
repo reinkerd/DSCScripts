@@ -168,8 +168,8 @@ $Source = "\\netops08.ss911.net\temp"
 
 # Get credentials.  Credentials for David have been placed in the creds folder.  This is a convenience to avoid
 # entering credentials every time it's run
-if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\sqlservice.xml }
-if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\sa.xml }
+if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sqlservice.xml }
+if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sa.xml }
 
 # Create MOF files
 SQLServers -Source $Source -ConfigurationData sqlnodes.psd1 -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 

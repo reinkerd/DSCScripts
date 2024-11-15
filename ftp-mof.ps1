@@ -158,7 +158,7 @@ Configuration FTPServers
 # Hard-coded source location for modules and other files to copy to target server
 $source = "\\netops08.ss911.net\temp"
 
-$PDFFTPCred = Import-Clixml -path $source\creds\pdfftp.xml
+$PDFFTPCred = Import-Clixml -path $source\creds\$env:username\$env:computername\pdfftp.xml
 
 # Create MOF files
 FTPServers -PDFFTPCred $PDFFTPCred -source $source -ConfigurationData FTPNodes.psd1  

@@ -98,11 +98,13 @@ Configuration SS911_Common
         Ensure="Present"
     }
 
+    <#
     ss911_tls TLS 
     {
         Ensure="Present"
     }
-
+    #>
+    
     #
     # File Folders, shares and permissions
     #

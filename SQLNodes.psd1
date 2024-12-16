@@ -68,21 +68,21 @@
             NodeName="StandbyDB01.ss911.net" 
             SQLPath="c:\sql2022"
             SQLDataPath="e:\sqldata"
-            SQLLogsPath="f:\sqllogs"
+            SQLLogsPath="e:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="StandbyDB02.ss911.net" 
             SQLPath="c:\sql2022"
             SQLDataPath="e:\sqldata"
-            SQLLogsPath="f:\sqllogs"
+            SQLLogsPath="e:\sqllogs"
             Environment="P"
          },
          @{
             NodeName="StandbyDB03.ss911.net" 
             SQLPath="c:\sql2022"
             SQLDataPath="e:\sqldata"
-            SQLLogsPath="f:\sqllogs"
+            SQLLogsPath="e:\sqllogs"
             Environment="P"
          },
          @{

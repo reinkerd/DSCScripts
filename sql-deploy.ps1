@@ -33,4 +33,5 @@ foreach ($file in $files) {
 #>
 
 # Set the Server max memory according to a formula
-Set-DbaMaxMemory -SqlInstance $Server
+$Instance = Connect-DbaInstance -SqlInstance $Server -TrustServerCertificate
+Set-DbaMaxMemory -SqlInstance $Instance

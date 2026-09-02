@@ -1,27 +1,21 @@
-﻿
+﻿param ([string]$Server)
 
 [DSCLocalConfigurationManager()]
 configuration LCMConfig
 {
-    Node "ProdIISFarm1.ss911.net"
+    Node $Server
     {
         Settings
         {
             RefreshMode = 'Push'
             RebootNodeIfNeeded = $true
-            ConfigurationMode = "ApplyAndMonitor"
+            ConfigurationMode = "ApplyOnly"
             ActionAfterReboot = "ContinueConfiguration"
         }
     }
 }
 
-LCMConfig
+LCMConfig 
 
-$server = "labsql1.ss911.net"
+Set-DscLocalConfigurationManager -path ".\lcmconfig" -ComputerName $Server
 
-if ($cred -eq $null) { $cred = Get-Credential "lesa\reinkerd" }
-if ($cim -eq $null) { $cim=New-CimSession -ComputerName $server -Credential $cred }
-
-Set-DscLocalConfigurationManager -path ".\lcmconfig" -cim $cim
-
-Get-DscLocalConfigurationManager -cim $cim | format-table RefreshMode, RebootNodeIfNeeded, ConfigurationMode, ActionAfterReboot

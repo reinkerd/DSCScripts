@@ -20,12 +20,34 @@ Configuration DMZServers
 
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        $OnlineReportingCred,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        $CSSWebServiceCred,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        $CSSTransferCred,
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [System.Management.Automation.PSCredential]
+        $OctopusCompareCred,
+
+
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [String]
         $Source
-        
     )
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC, xWebAdministration      
+    
+
+    Import-DscResource -ModuleName PSDesiredStateConfiguration, cchoco, ss911, SQLServerDSC, xWebAdministration
 
 
     Node $AllNodes.NodeName
@@ -121,13 +143,34 @@ Configuration DMZServers
             SourcePath="$Source\wwwroot"
             Recurse=$true
         }
-            
+
+        User OnlineReporting 
+        {
+            UserName                    = 'OnlineReporting'
+            FullName                    = 'OnlineReporting'
+            Description                 = 'Account used by Citizen Online Reporting'
+            Password                    = $OnlineReportingCred
+            Ensure                      = 'Present'
+            PasswordChangeRequired      = $false
+            PasswordNeverExpires        = $true
+            PasswordChangeNotAllowed    = $true
+        }
+
+
+        ss911_LocalGroup Administrators
+        {
+            DependsOn = "[User]OnlineReporting"
+            Ensure="Present"
+            Name="IIS_IUSRS"
+            AdGroup="IIS_IUSRS"
+            MembersToInclude="OnlineReporting"
+        }
 
         xWebSite RMS
         {
             Ensure="Present"
             Name="RMS"
-            DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+            DependsOn=@("[File]wwwRootFolder","[WindowsFeature]WebServer")
             State="Started"
             PhysicalPath="c:\inetpub\wwwroot\RMS"
             BindingInfo=@(
@@ -241,6 +284,45 @@ Configuration DMZServers
 
         } 
 
+        SqlLogin CSSWebService 
+        {
+            Ensure="Present"
+            InstanceName = "MSSQLServer"
+            DependsOn = "[SqlSetup]InstallSQL"
+            Name="CSSWebService"
+            LoginType = "SqlLogin"
+            LoginPasswordPolicyEnforced = $true
+            LoginPasswordExpirationEnabled = $false
+            LoginMustChangePassword = $false
+            LoginCredential = $CSSWebServiceCred
+        }
+
+        SqlLogin CSSTransfer
+        {
+            Ensure="Present"
+            InstanceName = "MSSQLServer"
+            DependsOn = "[SqlSetup]InstallSQL"
+            Name="CSSTransfer"
+            LoginType = "SqlLogin"
+            LoginPasswordPolicyEnforced = $true
+            LoginPasswordExpirationEnabled = $false
+            LoginMustChangePassword = $false
+            LoginCredential = $CSSTransferCred
+        }
+
+        SqlLogin OctopusCompare
+        {
+            Ensure="Present"
+            InstanceName = "MSSQLServer"
+            DependsOn = "[SqlSetup]InstallSQL"
+            Name="OctopusCompare"
+            LoginType = "SqlLogin"
+            LoginPasswordPolicyEnforced = $true
+            LoginPasswordExpirationEnabled = $false
+            LoginMustChangePassword = $false
+            LoginCredential = $OctopusCompareCred
+        }
+
         SqlConfiguration AllowUpdates
         {
             InstanceName    = 'MSSQLSERVER' 
@@ -300,7 +382,11 @@ $Source = "\\netops08.ss911.net\temp"
 # entering credentials every time it's run
 if ($null -eq $SQLServiceCredential) { $SQLServiceCredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sqlservice.xml }
 if ($null -eq $SACredential) { $SACredential = Import-Clixml -path $source\creds\$env:username\$env:computername\sa.xml }
+if ($null -eq $OnlineReportingCred) { $OnlineReportingCred = Import-Clixml -path $source\creds\$env:username\$env:computername\onlinereporting.xml }
+if ($null -eq $CSSWebServiceCred) { $CSSWebServiceCred = Import-Clixml -path $source\creds\$env:username\$env:computername\CSSWebService.xml }
+if ($null -eq $CSSTransferCred) { $CSSTransferCred = Import-Clixml -path $source\creds\$env:username\$env:computername\CSSTransfer.xml }
+if ($null -eq $OctopusCompareCred) { $OctopusCompareCred = Import-Clixml -path $source\creds\$env:username\$env:computername\OctopusCompare.xml }
 
 # Create MOF files
-DMZServers -Source $Source -ConfigurationData DMZNodes.psd1 -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential 
+DMZServers -Source $Source -ConfigurationData DMZNodes.psd1 -SqlServiceCredential $SQLServiceCredential -SACredential $SACredential -OnlineReportingCred $OnlineReportingCred -CSSWebServiceCred $CSSWebServiceCred -csstransfercred $csstransfercred -octopuscompare $octopuscomparecred
 

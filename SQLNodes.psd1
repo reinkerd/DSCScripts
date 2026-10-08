@@ -89,7 +89,7 @@
             NodeName="TrainDB01.ss911.net" 
             SQLPath="c:\sql2022"
             SQLDataPath="e:\sqldata"
-            SQLLogsPath="f:\sqllogs"
+            SQLLogsPath="e:\sqllogs"
             Environment="T"
          }
     )

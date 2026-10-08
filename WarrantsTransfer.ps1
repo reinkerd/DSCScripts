@@ -18,9 +18,9 @@ $Nodes = @{
          @{
             NodeName=$Server
             Environment="P"
-            Administrators="LESA\LESAApp"
-            AutoLogonAccount="lesa\lseaapp"
-            AutoLogonPassword="lesaapp"
+            Administrators="SS911\WarrantsAttachments"
+            AutoLogonAccount="SS911\WarrantsAttachments"
+            AutoLogonPassword="<EnterPasswordHere>"
          }
      )
 }

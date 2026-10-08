@@ -47,11 +47,12 @@ Configuration SS911_Common
     # Install Chocolatey and Chocolatey packages                                                                      
     #                                                                                                                 
 
-    cChocoInstaller installChoco
+    <# cChocoInstaller installChoco
     {
         DependsOn="[WindowsFeature]NetCore35"
         InstallDir="C:\ProgramData\chocolatey"   
     }
+    #>
 
     cChocoPackageInstaller 7Zip
     {
@@ -98,12 +99,10 @@ Configuration SS911_Common
         Ensure="Present"
     }
 
-    <#
     ss911_tls TLS 
     {
         Ensure="Present"
     }
-    #>
     
     #
     # File Folders, shares and permissions

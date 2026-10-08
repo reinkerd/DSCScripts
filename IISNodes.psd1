@@ -1,0 +1,40 @@
+﻿@{
+    AllNodes = @(
+        @{ 
+            NodeName="*" 
+            psdscallowplaintextpassword = $true
+            PSDscAllowDomainUser=$true
+        },
+        @{
+            NodeName="DevIIS1.ss911.net" 
+            IPAddress="192.103.188.XXX"
+            Websites="Netmenu","RMS","StateInterface"
+            Environment="D"
+        },
+        @{
+            NodeName="TestIIS1.ss911.net" 
+            IPAddress="192.103.188.XXX"
+            Websites="Netmenu","RMS","StateInterface"
+            Environment="D"
+        },
+        @{
+            NodeName="ProdIIS1.ss911.net" 
+            IPAddress="192.103.180.XXX"
+            Websites="Netmenu","RMS","StateInterface"
+            Environment="P"
+        },
+        @{
+            NodeName="DataXfer.lesa.net" 
+            IPAddress="192.103.180.56"
+            Websites="Jindex"
+            Administrators=@("LESA\Dev leads","LESA\ChanK","LESA\EmersonM","LESA\Eng","LESA\ESOCADMonitor","LESA\jindex","LESA\LesaUtilities","LESA\McNamarM","LESA\FossB")
+            Environment="P"
+        },
+        @{
+            NodeName="CEWS01.lesa.net" 
+            IPAddress="192.103.180.98"
+            Websites="IncidentMapping"
+            Environment="P"
+        }
+    )
+}

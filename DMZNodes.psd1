@@ -11,6 +11,20 @@
             SQLDataPath="c:\sqldata"
             SQLLogsPath="c:\sqllogs"
             Environment="D"
+         },
+         @{
+            NodeName="TestIIS4.ss911.net" 
+            SQLPath="c:\sql2025"
+            SQLDataPath="c:\sqldata"
+            SQLLogsPath="c:\sqllogs"
+            Environment="Q"
+         },
+         @{
+            NodeName="ProdIIS4.ss911.net" 
+            SQLPath="c:\sql2025"
+            SQLDataPath="c:\sqldata"
+            SQLLogsPath="c:\sqllogs"
+            Environment="P"
          }
     )
 }

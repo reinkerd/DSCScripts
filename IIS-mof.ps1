@@ -31,6 +31,11 @@ Configuration IISServers
             Node=$Node
         }
 
+        cChocoPackageInstaller 7Zip
+        {
+            Name="sqlserver-odbcdriver"
+            Ensure="Present"
+        }
 
         ###################################################################################################################
         #                                                                                                                 #
@@ -151,6 +156,160 @@ Configuration IISServers
             }
         }
 
+        ###########################################################################################
+        # ScreeningSheets
+
+        File ExtractEmailFromExchangeServer-ScreeningSheets
+        {
+            DestinationPath="C:\LESA\ExtractEmailFromExchangeServer-ScreeningSheets"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl ExtractEmailFromExchangeServer-ScreeningSheets
+        {
+            DependsOn = "[File]ExtractEmailFromExchangeServer-ScreeningSheets"
+            Path="c:\LESA\ExtractEmailFromExchangeServer-ScreeningSheets"
+            Ensure="Present"
+            ReadAccess = "LESA\LESA-it-developers"
+            WriteAccess="SS911\recordsautomation,LESA\LESAUtilities"
+        }
+
+        ###########################################################################################
+        # Fingerprints
+
+        File ExtractEmailFromExchangeServer-Fingerprints
+        {
+            DestinationPath="C:\LESA\ExtractEmailFromExchangeServer-Fingerprints"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl ExtractEmailFromExchangeServer-Fingerprints
+        {
+            DependsOn="[File]ExtractEmailFromExchangeServer-Fingerprints"
+            Path="c:\LESA\ExtractEmailFromExchangeServer-Fingerprints"
+            Ensure="Present"
+            WriteAccess="SS911\recordsautomation,LESA\LESAUtilities"
+        }
+
+        File FingerprintResponse-FingerprintMessage
+        {
+            DestinationPath="C:\lesa\data\fingerprintresponse"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl FingerprintResponse-FingerprintMessage
+        {
+            DependsOn="[File]FingerprintResponse-FingerprintMessage"
+            Path="C:\lesa\data\fingerprintresponse"
+            Ensure="Present"
+            WriteAccess="SS911\fingerprintmessage"
+        }
+
+        ###########################################################################################
+        # ScreeningSheetProcessor
+
+        File ScreeningSheetProcessor
+        {
+            DestinationPath="C:\LESA\ScreeningSheetProcessor"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl ScreeningSheetProcessor
+        {
+            DependsOn = "[File]ScreeningSheetProcessor"
+            Path="c:\LESA\ScreeningSheetProcessor"
+            Ensure="Present"
+            WriteAccess="SS911\recordsautomation,LESA\LESAUtilities"
+        }
+
+        ###########################################################################################
+        # EventLogConsolidator
+
+        File EventLogConsolidator
+        {
+            DestinationPath="C:\LESA\Data\EventLogConsolidator"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl EventLogConsolidator
+        {
+            DependsOn = "[File]EventLogConsolidator"
+            Path="c:\LESA\Data\EventLogConsolidator"
+            Ensure="Present"
+            WriteAccess="SS911\recordsautomation,LESA\LESAUtilities,SS911\EventLogConsolidator"
+        }
+
+        ###########################################################################################
+        # Electronic Turnout
+
+        File ElectronicTurnout
+        {
+            DestinationPath="C:\Temp"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl ElectronicTurnout
+        {
+            Path="c:\Temp"
+            Ensure="Present"
+            WriteAccess="SS911\ElectronicTurnout"
+        }
+
+        ###########################################################################################
+        # LESADataLogs
+
+        File LESADataLogs
+        {
+            DestinationPath="C:\LESA\Data\Logs"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl DataLogs
+        {
+            Path="c:\LESA\Data\Logs"
+            Ensure="Present"
+            WriteAccess="SS911\recordsautomation,LESA\LESAUtilities,SS911\ScreeningSheets,SS911\EventLogConsolidator"
+        }
+
+        ###########################################################################################
+        # Warrants
+
+        File Warrants
+        {
+            DestinationPath="C:\inetpub\wwwroot\records"
+            Type="Directory"
+            Ensure="Present"
+        }
+
+        ss911_fileacl Warrants
+        {
+            Path="C:\inetpub\wwwroot\records"
+            Ensure="Present"
+            WriteAccess="SS911\warrants"
+        }
+
+        ###################################################################################################################
+        #                                                                                                                 #
+        # Local Groups                                                                                                    #
+        #                                                                                                                 #
+        ###################################################################################################################
+
+        ss911_LocalGroup IIS_IUSRS
+        {
+            Ensure="Present"
+            Name="IIS_IUSRS"
+            AdGroup="IIS_IUSRS"
+            MembersToInclude="SS911\Oscar,SS911\ElectronicTurnout"
+        }
+
+
         File wwwRootFolder
         {
             DestinationPath="C:\inetpub\wwwroot"
@@ -215,7 +374,6 @@ Configuration IISServers
         # Set up web sites.  
         #                                      
         
-
         if ($Node.Websites.Contains('IncidentMapping'))
         {
 
@@ -276,31 +434,63 @@ Configuration IISServers
         if ($Node.WebSites.Contains('Netmenu'))
         {
 
-            # Default IIS server setup.  Create three sites: Netmenu, RMS and StateInterface
+            File Netmenu
+            {
+                DestinationPath="C:\inetpub\wwwroot\netmenu"
+                Type="Directory"
+                Ensure="Present"
+            }
 
             xWebSite Netmenu
             {
                 Ensure="Present"
                 Name="NetMenu"
-                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                DependsOn="[File]Netmenu","[WindowsFeature]WebServer"
                 State="Started"
                 PhysicalPath="c:\inetpub\wwwroot\Netmenu"
                 BindingInfo=@(
                     @(MSFT_xWebBindingInformation
                     {
-                        Protocol="HTTP"
-                        Port="80"
+                        Protocol="HTTPS"
+                        Port="443"
                         IPAddress=$Node.IPAddress
-                        HostName="Netmenu$IISEnv.southsound911.org"
+                        HostName="Netmenu$IISEnv"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
                     }
                     );
-                    
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="Netmenu$IISEnv.SouthSound911.org"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    );
                     @(MSFT_xWebBindingInformation
                     {
                         Protocol="HTTP"
                         Port="80"
                         IPAddress=$Node.IPAddress
-                        HostName="Netmenu$IISEnv"
+                        HostName="LESASystemsService$IISEnv"
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="LESASystemsService$IISEnv.SouthSound911.org"
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="LESASystemsService$IISEnv.lesa.net"
                     }
                     )
                 )
@@ -317,28 +507,40 @@ Configuration IISServers
 
         if ($Node.Websites.contains('RMS'))
         {
+            File RMS
+            {
+                DestinationPath="C:\inetpub\wwwroot\rms"
+                Type="Directory"
+                Ensure="Present"
+            }
+
             xWebSite RMS
             {
                 Ensure="Present"
                 Name="RMS"
-                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                DependsOn="[File]RMS","[WindowsFeature]WebServer"
                 State="Started"
                 PhysicalPath="c:\inetpub\wwwroot\RMS"
+
                 BindingInfo=@(
                     @(MSFT_xWebBindingInformation
                     {
-                        Protocol="HTTP"
-                        Port="80"
+                        Protocol="HTTPS"
+                        Port="443"
                         IPAddress=$Node.IPAddress
-                        HostName="RMS$IISEnv.southsound911.org"
+                        HostName="RMS$IISEnv"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
                     }
                     );
                     @(MSFT_xWebBindingInformation
                     {
-                        Protocol="HTTP"
-                        Port="80"
+                        Protocol="HTTPS"
+                        Port="443"
                         IPAddress=$Node.IPAddress
-                        HostName="RMS$IISEnv"
+                        HostName="RMS$IISEnv.southsound911.org"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
                     }
                     )
                 )
@@ -351,16 +553,240 @@ Configuration IISServers
 
         }
 
+        # Records Website
+
+        if ($Node.Websites.contains('Records'))
+        {
+
+            File Records
+            {
+                DestinationPath="C:\inetpub\wwwroot\records"
+                Type="Directory"
+                Ensure="Present"
+            }
+
+            xWebSite Records
+            {
+                Ensure="Present"
+                Name="Records"
+                DependsOn="[File]Records","[WindowsFeature]WebServer"
+                State="Started"
+                PhysicalPath="c:\inetpub\wwwroot\Records"
+
+                BindingInfo=@(
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="Records$IISEnv"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="Records$IISEnv.southsound911.org"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    )
+                )
+                AuthenticationInfo=MSFT_xWebAuthenticationInformation 
+                {
+                    Anonymous=$false
+                    Windows=$true
+                }
+            }
+
+        }
+
+        if ($Node.Websites.contains('WebRMS'))
+        {
+            File WebRMS
+            {
+                DestinationPath="C:\inetpub\wwwroot\webrms"
+                Type="Directory"
+                Ensure="Present"
+            }
+
+            xWebSite WebRMS
+            {
+                Ensure="Present"
+                Name="WebRMS"
+                DependsOn="[File]webrms","[WindowsFeature]WebServer"
+                State="Started"
+                PhysicalPath="c:\inetpub\wwwroot\WebRMS"
+
+                BindingInfo=@(
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="WebRMS$IISEnv"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="WebRMS$IISEnv.southsound911.org"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    )
+                )
+                AuthenticationInfo=MSFT_xWebAuthenticationInformation 
+                {
+                    Anonymous=$false
+                    Windows=$true
+                }
+            }
+
+        }
+
+        if ($Node.Websites.contains('REDIRECT'))
+        {
+            xWebSite REDIRECT
+            {
+                Ensure="Present"
+                Name="REDIRECT"
+                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                State="Started"
+                PhysicalPath="c:\inetpub\wwwroot"
+
+                BindingInfo=@(
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="Netmenu$IISEnv.southsound911.org"
+                    }
+                    )
+                )
+                AuthenticationInfo=MSFT_xWebAuthenticationInformation 
+                {
+                    Anonymous=$true
+                    Windows=$false
+                }
+            }
+
+            xWebConfigProperty REDIRECTEnabled
+            {
+                DependsOn="[xWebSite]REDIRECT"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/REDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="enabled"
+                Value='True'
+                Ensure='Present'
+            }
+
+            xWebConfigProperty REDIRECTDestination
+            {
+                DependsOn="[xWebSite]REDIRECT"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/REDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="destination"
+                Value='https://netmenu.southsound911.org$S$Q'
+                Ensure='Present'
+            }
+
+            xWebConfigProperty REDIRECTExactDestination
+            {
+                DependsOn="[xWebSite]REDIRECT"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/REDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="exactDestination"
+                Value='True'
+                Ensure='Present'
+            }
+
+        }
+
+        if ($Node.Websites.contains('WebRMSRedirect'))
+        {
+            xWebSite WebRMSRedirect
+            {
+                Ensure="Present"
+                Name="WebRMSRedirect"
+                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                State="Started"
+                PhysicalPath="c:\inetpub\wwwroot"
+
+                BindingInfo=@(
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="WebRMS$IISEnv.southsound911.org"
+                    }
+                    )
+                )
+                AuthenticationInfo=MSFT_xWebAuthenticationInformation 
+                {
+                    Anonymous=$true
+                    Windows=$false
+                }
+            }
+
+            xWebConfigProperty WebRMSRedirectEnabled
+            {
+                DependsOn="[xWebSite]WebRMSRedirect"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/WEBRMSREDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="enabled"
+                Value='True'
+                Ensure='Present'
+            }
+
+            xWebConfigProperty WebRMSRedirectDestination
+            {
+                DependsOn="[xWebSite]WebRMSRedirect"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/WEBRMSREDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="destination"
+                Value='https://webrms.southsound911.org$S$Q'
+                Ensure='Present'
+            }
+
+            xWebConfigProperty WebRMSRedirectExactDestination
+            {
+                DependsOn="[xWebSite]WebRMSRedirect"
+                WebSitePath="MACHINE/WEBROOT/APPHOST/WEBRMSREDIRECT"
+                Filter= "system.webServer/httpRedirect"
+                PropertyName="exactDestination"
+                Value='True'
+                Ensure='Present'
+            }
+
+        }
 
         # StateInterface web site
 
         if ($Node.Websites.contains('StateInterface'))
         {
+
+            File StateInterface
+            {
+                DestinationPath="C:\inetpub\wwwroot\stateinterface"
+                Type="Directory"
+                Ensure="Present"
+            }
+
             xWebSite StateInterface
             {
                 Ensure="Present"
                 Name="StateInterface"
-                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                DependsOn="[File]StateInterface","[WindowsFeature]WebServer"
                 State="Started"
                 PhysicalPath="c:\inetpub\wwwroot\StateInterface"
                 BindingInfo=@(
@@ -379,7 +805,28 @@ Configuration IISServers
                         IPAddress=$Node.IPAddress
                         HostName="StateInterface$IISEnv"
                     }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="StateInterface$IISEnv"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTPS"
+                        Port="443"
+                        IPAddress=$Node.IPAddress
+                        HostName="StateInterface$IISEnv.southsound911.org"
+                        CertificateStoreName = "WebHosting"
+                        CertificateThumbprint = $Node.CertificateThumbprint
+                    }
                     )
+
                 )
                 AuthenticationInfo=MSFT_xWebAuthenticationInformation 
                 {

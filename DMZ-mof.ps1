@@ -157,7 +157,7 @@ Configuration DMZServers
         }
 
 
-        ss911_LocalGroup Administrators
+        ss911_LocalGroup IIS_IUSRS
         {
             DependsOn = "[User]OnlineReporting"
             Ensure="Present"

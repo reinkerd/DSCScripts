@@ -542,6 +542,22 @@ Configuration IISServers
                         CertificateStoreName = "WebHosting"
                         CertificateThumbprint = $Node.CertificateThumbprint
                     }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="RMS$IISEnv"
+                    }
+                    );
+                    @(MSFT_xWebBindingInformation
+                    {
+                        Protocol="HTTP"
+                        Port="80"
+                        IPAddress=$Node.IPAddress
+                        HostName="RMS$IISEnv.southsound911.org"
+                    }
                     )
                 )
                 AuthenticationInfo=MSFT_xWebAuthenticationInformation 
@@ -654,13 +670,22 @@ Configuration IISServers
 
         if ($Node.Websites.contains('REDIRECT'))
         {
+            $url = ("https://netmenu{0}.southsound911.org{1}" -f $IISEnv,"$S$Q")
+
+            File Redirect
+            {
+                DestinationPath="C:\inetpub\wwwroot\redirect"
+                Type="Directory"
+                Ensure="Present"
+            }
+
             xWebSite REDIRECT
             {
                 Ensure="Present"
                 Name="REDIRECT"
-                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                DependsOn="[File]Redirect","[WindowsFeature]WebServer"
                 State="Started"
-                PhysicalPath="c:\inetpub\wwwroot"
+                PhysicalPath="c:\inetpub\wwwroot\redirect"
 
                 BindingInfo=@(
                     @(MSFT_xWebBindingInformation
@@ -695,7 +720,7 @@ Configuration IISServers
                 WebSitePath="MACHINE/WEBROOT/APPHOST/REDIRECT"
                 Filter= "system.webServer/httpRedirect"
                 PropertyName="destination"
-                Value='https://netmenu.southsound911.org$S$Q'
+                Value=$url
                 Ensure='Present'
             }
 
@@ -713,13 +738,23 @@ Configuration IISServers
 
         if ($Node.Websites.contains('WebRMSRedirect'))
         {
+
+            $url = ("https://webrms{0}.southsound911.org{1}" -f $IISEnv, "$S$Q")
+
+            File WebRMSRedirect
+            {
+                DestinationPath="C:\inetpub\wwwroot\webrmsredirect"
+                Type="Directory"
+                Ensure="Present"
+            }
+
             xWebSite WebRMSRedirect
             {
                 Ensure="Present"
                 Name="WebRMSRedirect"
-                DependsOn="[File]wwwRootFolder","[WindowsFeature]WebServer"
+                DependsOn="[File]WebRMSRedirect","[WindowsFeature]WebServer"
                 State="Started"
-                PhysicalPath="c:\inetpub\wwwroot"
+                PhysicalPath="c:\inetpub\wwwroot\webrmsredirect"
 
                 BindingInfo=@(
                     @(MSFT_xWebBindingInformation
@@ -754,7 +789,7 @@ Configuration IISServers
                 WebSitePath="MACHINE/WEBROOT/APPHOST/WEBRMSREDIRECT"
                 Filter= "system.webServer/httpRedirect"
                 PropertyName="destination"
-                Value='https://webrms.southsound911.org$S$Q'
+                Value= $url
                 Ensure='Present'
             }
 

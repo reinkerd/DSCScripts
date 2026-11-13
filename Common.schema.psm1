@@ -383,11 +383,11 @@ Configuration SS911_Common
     # Machine Config Settings
     #
 
-    ss911_machineconfig MachineConfig 
-    {
-        Ensure="Present"
-        Environment=$Env
-    }
+    #ss911_machineconfig MachineConfig 
+    #{
+    #    Ensure="Present"
+    #    Environment=$Env
+    #}
 
 
     #
